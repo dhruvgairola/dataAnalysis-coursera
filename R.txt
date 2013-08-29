@@ -1,0 +1,385 @@
+Everything is an object.
+
+Five basic classes: char, numeric, int, complex, logical
+
+Vector must have objects of same class.
+List can contain objects of diff class, but is backed as a vector.
+
+Empty vector:
+vector()
+
+All numbers are numeric objects (double precision). For integer, add L suffix. e.g., 1L
+
+Infinity : Inf, -Inf
+
+R objects can have attributes :
+e.g., names, dimnames (dimension), class, length, other metadata
+
+Attributes function: attributes()
+
+Assignment : <-
+Comment : #
+
+Explicit printing : print(x)
+
+Sequence : x <- 1:20
+
+Vectors of objects : c() function, called concatenate
+e.g., x <- c(0.5, 0.6)
+
+TRUE can also be written as T
+x <- c(1+0i, 2+4i) where i is imaginary number
+
+x <- vector("numeric", length=10)
+
+What if you create vector with different types of object?
+Called coercion, determined by certain rules.
+e.g., y <- c(12, "a") ## 12 is coerced to character
+out : [1] "12" "a" 
+
+You can explicitly coerce using the as functions. e.g.,
+x <- 0:6
+as.logical(x)
+out : [1] F T T T T T T
+as.complex(x)
+as.numeric(x)
+
+Nonsensical coercion results in NAs. e.g.,
+x <- c("a", "b")
+as.numeric(x)
+out : [1] NA NA
+
+Matrices are special types, backed by vectors. They have an attribute called dimension.
+> m <- matrix(nrow = 2, ncol = 3)
+> dim(m) ## dimension
+[1] 2 3
+> attributes(m)
+$dim
+[1] 2 3
+
+Matrices are constructed column-wise. e.g.,
+
+> m <- matrix(1:6, nrow = 2, ncol = 3)
+     [,1] [,2] [,3][1,]    1    3    5[2,]    2    4    6
+
+
+Matrices can be constructed using vectors by adding dimension attribute.
+e.g.,
+> m <- 1:10
+> dim(m) <- c(2, 5)
+     [,1] [,2] [,3] [,4] [,5][1,]    1    3    5    7    9[2,]    2    4    6    8   10
+Will throw error if length of m doesn't match e.g., m <- 1:9
+
+Another way is to use column-binding or row-binding e.g,
+> x <- 1:3
+> y <- 10:12
+> cbind(x, y)
+     x  y[1,] 1 10[2,] 2 11[3,] 3 12
+-> rbind(x, y)
+  [,1] [,2] [,3]x    1    2    3y   10   11   12
+
+Lists are special vectors. Elements of lists are indexed by double brackets [[]]. Elements of vectors have single brackets [].
+> x <- list(1, "a", TRUE, 1+4i)
+[[1]][1] 1[[2]][1] "a"[[3]][1] TRUE[[4]][1] 1+4i
+
+Factors are vectors used to represent categorical data. Can think of it as an
+integer vector with a label. They are self-describing. e.g., "Male" and "Female" is more descriptive that 1 and 2.
+
+Input into factor is a character vector e.g.,
+> x <- factor(c("yes", "no", "no"))
+> x
+[1] yes no  no Levels: no yes
+> table(x) ## count of "yes" and "no"
+> unclass(x) ## how factors are represented in R
+
+Baseline level is 1st level in vector. "no" will come first by default cos n comes before y in the alphabet. "yes" is second level. But you can change this e.g.,
+> x <- factor(c("yes", "no", "no"), levels = c("yes", "no"))
+
+is.na() ## is object NA
+is.nan() ## is object NaN
+e.g.,
+> x <- c(1, 2, NA, 10, 3)
+> is.na(x)
+[1] FALSE FALSE  TRUE FALSE FALSE
+> is.nan(x)[1] FALSE FALSE FALSE FALSE FALSE
+> x <- c(1, 2, NA, NaN, 3)
+> is.na(x)
+[1] FALSE FALSE  TRUE  TRUE FALSE
+> is.nan(x)
+[1] FALSE FALSE FALSE  TRUE FALSE
+
+NA is the superset of NaN
+
+Data frame is used to store tabular data. They are important. They're kinda like DB tables.
+Special type of list. Every column has to have the same length.
+Every row has a name. Each column can hold different data (vs Matrices where everything is the same). e.g.,
+
+> x <- data.frame(foo = 1:4, bar= c(T, T, F, F))
+  foo   bar1   1  TRUE2   2  TRUE3   3 FALSE4   4 FALSE
+
+R objects can also have names. e.g., 
+> x <- 1:2
+> names(x) <- c("foo", "bar")
+> x <- list(a=1, b=2, c=3)
+
+Matrices names :
+> m <- matrix(1:4, nrow=2, ncol=2)
+> dimnames(m) <- list(c("a", "b"), c("c", "d"))
+> m
+  c da 1 3b 2 4
+
+---------------------
+
+Working dir:
+> getwd()
+> setwd("/Users/dhruvgairola/Documents/Workspace/R/")
+Click text editor to create code.
+File -> New -> R Script
+> source("myfun.R") ## copies and pastes your file to console
+
+
+str function gives the function definition.
+
+[ subsetting is used to get object of same class back.
+[[ used to extract elements of list or data frame, and only single element. Class returned may not be the same as list or data frame.
+$ is used to extract elements of a list of data frame by name.
+
+> x <- c("a", "b", "c")
+> x[1]
+> x[1:4]
+> x[x> "a"] ## logical subset
+> u <- x > "a"
+> x[u]
+> x <- matrix(1:6, 2, 3)
+> x[1,2] ## returns single element, which is a vector
+> x[1, ] ## returns elements, which is a vector
+> x[1, , drop = FALSE] ## returns matrix
+> x[1,2, drop = FALSE] ## returns single element matrix rather than vector
+
+> x <- list(foo = 1:4, bar = 0.6)
+> x[1] ## returns list
+> x[[1]] ## returns the elem
+
+$ can only be used with literals. [[ can work with computed indices.
+
+Functions are stored as stored objects.
+
+Can define function inside function. Return is the last statement to be evaluated.
+
+Function params can have default values.
+
+> args(sd)
+
+It's legal to change param order as long as it is matched by named. Not named will go in order of the remaining unmatched params. But not recommended.
+
+Params can also be partially matched by name.
+
+Params are evaluated lazily. e.g.,
+
+f <- function(a, b) {
+  a^2
+}
+
+f(2)
+
+
+f <- function(a, b) {
+  print(a)
+  print(b)
+}
+
+
+> f(45)
+[1] 45
+Error
+
+Notice that the error only happened after print(a). Lazy eval.
+
+... is varargs. Often used when extending another function and don't want to copy the entire arg list. You can pass ... to functions in your definition.
+
+Any params that apper after ... must be named explicity and cannot be partially matched.
+
+Search list are all the packages that are loaded into R.
+
+Global environment is also your workspace, and is searched first. Base package is always the last.
+
+R has separate namespaces for objects and functions.
+
+You can load a package with the library command.
+
+An environment is a collection of key/val pairs. Every env has a parent env. A parent can have many children. Only env without a parent is the empty env.
+
+A function + an environment = closure.
+
+Free variable : checks current function env first, the the parent env, the its parent, until you find the value of the free var. Top level level is global, unless its defined in a package, where the package is he top level.
+
+A function can return a function as its return value.
+
+Whats in a functions env?
+> ls(environment(cube))
+[1] "n" "pow"
+> get("n", environment(cube))
+[1] 3
+
+In R, all objects must be store in memory.
+
+Optimization fns take fns which take a vector of params as the param.
+
+lappy => apply fn to every element of a list of objects
+
+> args(lapply)
+function (X, FUN, ...) NULL
+
+lapply makes use of anonymous functions. You can thus define your function as a param to lapply. lapply returns list.
+
+sapply simplifies the result of lapply if possible. thus, sapply will return vector if returned stuff has only 1 arg. It will return a matrix if all returned stuff have the same length. Otherwise, it will return a list.
+
+runif function generates n number of random variables.
+
+An array is a vector with dimensions attached. e.g., a matrix is a 2D array.
+
+tapply is used to apply fn over subsets of a vector.
+
+tapply splits a vector into groups.
+
+mapply is a multivariate apply of sorts which applies a dn in parallel over a set of args.
+
+> invisible(x)
+
+doesn't print to console but returns x
+
+debugging tools :
+traceback
+debug : starts at top of fn
+browser : starts anywhere in fn
+trace
+recover : catch of try/catch
+
+browser is just like your R workspace. You env is you fn env. What is in your fn is in your env. can call debug even when your inside a debug mode. one more level deep.
+
+options(error=recover) # global option, occurs as long as your current R session is open
+
+rnorm : normal
+rpois : poisson
+
+d, r, p, q are functions associated with every distribution.
+
+Base graphics are usually constructed piecemeal. Lattice graphics are usually created in a single function call.
+
+Base graphics are used for creating 2D graphics.
+
+par function controls the graphics parameters.
+par is used to specify global graphics params that affects all plots in an R session.
+
+Copying plot to another device :
+dev.copy2pdf
+dev.copy
+
+Strength of lattice functions is that you can plot conditional variables.
+
+Base graphics fn plot data directly to the graphics device => side effect.
+Lattice graphics fns return an object of class trellis.
+
+The print methods for lattice fns actually do the work of plotting the data on the graphics device. On cmd line, trellis objects are auto-printed, so that it appears the fn is plotting the data.
+This objects can be store, but better to store the code+data.
+
+You can't use fns from the base package in the lattice package.
+
+Lattice fns have a panel fns which control what happens in each of the panels of the entire plot.
+
+Shingle - intervals which overlap, roughly equal no of observations.
+
+splom => scatter plot matrix; gives all possible combinations
+
+Lattice is good for plotting conditional data.
+
+?plotmath
+
+Default plotting colour schemes are horrible.
+
+grDevices package for colours.
+
+colors() lists the names of colors you can use in plots.
+
+colorRamp
+colorRampPalette
+
+RColorBrewer package
+
+smoothScatter(x, y) => good for a large number of points
+
+Regex stuff which I already know.
+
+
+Object oriented programming is a bit different in  than it is in most languages- pay attention to details.
+
+Two styles of classes and methods : S3 classes (old, inelegant, easier) and S4 classes (new, more rigorous, introduced in Dec 2001).
+
+S4 stuff can be found in the methods package, which is usually loaded by default.
+
+Class can be defined using setClass(). Object can be created using new().
+
+A generic fn is an R fn which dispatches methods. A generic funcion typically encapsulates a "generic" concept (e.g., plot, mean) i.e., they have different behaviours for diff params.
+
+The generic fn does not actually do any computation. It just finds the method on that specific object which it calls.
+
+Class function (i.e., .class or getClass())
+
+> class(1)
+[1] "numeric"
+> class(lm(y ~ x))
+[1] "lm"
+
+S3 and S4 generic fns look different but are the same conceptually.
+
+S3 :
+
+> methods("mean")
+[1] mean.data.frame mean.Date       mean.default    mean.difftime   mean.POSIXct    mean.POSIXlt   
+
+S4 :
+
+> showMethods("show") ## show is like print in S4
+
+Generic mechanism:
+1. fn checks class on obj
+2. search for appropriate method
+3. if not found, check for a default
+4. otherwise, throw error
+
+If you want to see the source for an S3 method, call getS3method or getMethod.
+
+If the source references useMethod, thats an S3 fn. If calls standard generic, thats an S4 fn.
+
+> head(getS3method("mean", "default"))
+> tail(getS3method("mean", "default"))
+
+.Internal means that it is implemented in C code, which you cant really see easily.
+
+You can call mean.default directly for some fns in s3, but you should NEVER call methods directly. Prefer the generic function bec implementations change and you would rather program to an interface. In s4, you can't call directly at all, so don't worry.
+
+If you write new methods for new classes, you'll probably end up writing methods for :
+- print/show
+- summary
+- plot
+(these are existing generic fns; you can write new methods obviously)
+
+S4 classes :
+
+You can specify data elements which are called slots. Define methods using setMethod, classes is setClass.
+
+setClass and setMethod register the class with the R system. Quitting R will result in forgetting these methods.
+
+------------------------------------------------------------
+
+search help file for phrase
+help.search("rnorm")
+
+Data are values of qualitative or quantitative variables, belonging to a set of items.
+
+Track your steps when converting from raw data to processed data.
+
+Big data is any dataset that is too big to handle/analyze in 1 computer. This depends on your perspective (1969 vs 2013). Its a hot topic cos its so easy and cheap to get a hold of data.
+
+You need the right data.
+
